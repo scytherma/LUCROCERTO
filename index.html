@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head> 
+    <link rel="icon" type="image/png" href="https://i.ibb.co/tyjmnjV/FAVCON-LUCRE-CERTO-FOGUETE.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precificação - Lucre Certo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
+    <script src="./auth-supabase.js"></script>
+    <script src="./script.js"></script>
+</head>
+<body>
+    <!-- Loading screen -->
+    <div id="loading-screen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100% );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    ">
+        <div style="text-align: center;">
+            <div style="
+                width: 50px;
+                height: 50px;
+                border: 3px solid rgba(255,255,255,0.3);
+                border-top: 3px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            "></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('user-header').style.display = 'flex';
+                document.getElementById("main-content").style.display = "block";
+                document.getElementById("userName").textContent = user.email;
+                document.getElementById("dropdownUserName").textContent = user.email;
+            }
+        });
+    </script>
+    <!-- Header com logo -->
+    <div class="user-header" id="user-header" style="display: none;">
+        <div class="logo-container">
+            <img src="https://i.postimg.cc/KYqk4xX2/LOGO-LUCRE-CERTO-FOGUETE.png" class="logo">
+        </div>
+        <div class="user-info">
+            <span id="userName">Carregando...</span>
+            <div class="user-menu-container">
+                <button class="user-icon-btn" id="userIconBtn">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="#ff6b35" stroke-width="2" fill="#f8f9fa"/>
+                        <circle cx="12" cy="8" r="3" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                        <path d="M6 20c0-4 3-6 6-6s6 2 6 6" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                    </svg>
+                </button>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-header">
+                        <span id="dropdownUserName"></span>
+                    </div>
+                    <div class="dropdown-item theme-toggle-item">
+                        <span>Tema:</span>
+                        <label class="switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Claro/Escuro</span>
+                    </div>
+                    <a href="#" class="dropdown-item">Configurações</a>
+                    <a href="#" class="dropdown-item">Ajuda</a>
+                    <a href="#" class="dropdown-item">Termos de Uso</a>
+                    <a href="#" class="dropdown-item logout-btn" id="logoutBtn">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="main-content" style="display: none;">
+        <!-- Sistema de Abas -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="shopee">Calculadora Shopee</button>
+                <button class="tab-button" data-tab="mercadolivre">Calculadora Mercado Livre</button>
+                <button class="tab-button disabled" data-tab="shein">Calculadora Shein</button>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Aba Shopee -->
+        <div class="tab-content active" id="shopee-tab">
+            <div class="calculator-wrapper">
+                <!-- Seção de Entrada de Dados -->
+                <div class="input-section">
+                    <!-- Toggle Programa de Frete Grátis -->
+                    <div class="frete-section">
+                        <h2>PROGRAMA DE FRETE GRÁTIS DA SHOPEE</h2>
+                        <div class="toggle-container">
+                            <label class="toggle">
+                                <input type="checkbox" id="freteGratis" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span class="toggle-label">Sim</span>
+                        </div>
+                    </div>
+
+                    <!-- Custo do Produto -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="custoProduto">CUSTO DO PRODUTO</label>
+                            <span class="help-icon" title="Preço de custo do produto. Clique no + para adicionar mais de um produto.">?</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">R$</span>
+                            <input type="text" id="custoProduto" placeholder="0,00">
+                            <div class="multiplier-container">
+                                <span class="multiplier">1x</span>
+                                <div class="multiplier-arrows">
+                                    <button type="button" class="arrow-up">▲</button>
+                                    <button type="button" class="arrow-down">▼</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Impostos -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="impostos">IMPOSTOS</label>
+                            <span class="help-icon" title="Porcentagem de imposto">?</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">%</span>
+                            <input type="text" id="impostos" placeholder="0">
+                        </div>
+                    </div>
+
+                    <!-- Despesas Variáveis -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="despesasVariaveis">DESPESAS VARIÁVEIS</label>
+                            <span class="help-icon" title="Valor gasto com o anúncio. Ex: frete, embalagem, etiqueta, etc.">?</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">R$</span>
+                            <input type="text" id="despesasVariaveis" placeholder="0,00">
+                        </div>
+                    </div>
+
+                    <!-- Custos Extras Dinâmicos -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label>CUSTOS EXTRAS</label>
+                            <span class="help-icon" title="Adicione valores que considerar importante para a precificação do anúncio clicando no +. Selecione entre R$ e %.">?</span>
+                            <button type="button" class="add-custo-extra-btn">+</button>
+                        </div>
+                        <div id="custosExtrasContainer">
+                            <!-- Campos de custo extra serão adicionados aqui via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Resultados -->
+                <div class="results-section">
+                    <!-- Resultados Principais -->
+                    <div class="main-results">
+                        <div class="result-item">
+                            <span class="result-label">Preço de Venda</span>
+                            <span class="result-value primary" id="precoVenda">R$ 5,00</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Lucro por Venda</span>
+                            <span class="result-value primary" id="lucroPorVenda">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Resultados Secundários -->
+                    <div class="secondary-results">
+                        <div class="result-box">
+                            <span class="result-label">Taxa da Shopee</span>
+                            <span class="result-value" id="taxaShopee">R$5,00</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Valor dos Impostos</span>
+                            <span class="result-value" id="valorImpostos">R$0,00</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Custo Total do Produto</span>
+                            <span class="result-value" id="custoTotal">R$0,00</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Retorno sobre Produto</span>
+                            <span class="result-value" id="retornoProduto">0%</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Markup %</span>
+                            <span class="result-value" id="markupPercent">0%</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Markup X</span>
+                            <span class="result-value" id="markupX">0X</span>
+                        </div>
+                    </div>
+
+                    <!-- Margem de Lucro -->
+                    <div class="margin-section">
+                        <h3>MARGEM DE LUCRO</h3>
+                        <div class="margin-slider-container">
+                            <input type="range" id="margemLucro" min="0" max="70" value="0" class="margin-slider" step="0.5">
+                            <span class="margin-value" id="margemValue">0%</span>
+                        </div>
+                    </div>
+                    <button type="button" id="limparCamposBtn" class="limpar-campos-btn">Limpar Campos</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Aba Mercado Livre -->
+        <div class="tab-content" id="mercadolivre-tab">
+            <div class="calculator-wrapper">
+                <!-- Seção de Entrada de Dados -->
+                <div class="input-section">
+
+
+                    <!-- Custo do Produto -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="custoProdutoML">CUSTO DO PRODUTO</label>
+                            <span class="help-icon" title="Preço de custo do produto">?</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">R$</span>
+                            <input type="text" id="custoProdutoML" placeholder="0,00">
+                            <div class="multiplier-container">
+                                <span class="multiplier" id="multiplierML">1x</span>
+                                <div class="multiplier-arrows">
+                                    <button type="button" class="arrow-up" data-target="ML">▲</button>
+                                    <button type="button" class="arrow-down" data-target="ML">▼</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Impostos -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="impostosML">IMPOSTOS</label>
+                            <span class="help-icon" title="Porcentagem de imposto">?</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">%</span>
+                            <input type="text" id="impostosML" placeholder="0">
+                        </div>
+                    </div>
+
+                    <!-- Despesas Variáveis -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="despesasVariaveisML">DESPESAS VARIÁVEIS</label>
+                            <span class="help-icon" title="Valor gasto com embalagem, etiqueta, etc.">?</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">R$</span>
+                            <input type="text" id="despesasVariaveisML" placeholder="0,00">
+                        </div>
+                    </div>
+
+                    <!-- Taxa do Mercado Livre -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="taxaMercadoLivreSelect">TAXA DO MERCADO LIVRE</label>
+                            <span class="help-icon" title="Selecione a categoria e tipo de anúncio">?</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">%</span>
+                            <select id="taxaMercadoLivreSelect" class="select-input">
+                                <option value="12">Geral - Clássico (12%)</option>
+                                <option value="15">Geral - Premium (15%)</option>
+                                <option value="14">Eletrônicos - Clássico (14%)</option>
+                                <option value="17">Eletrônicos - Premium (17%)</option>
+                                <option value="16">Moda e Beleza - Clássico (16%)</option>
+                                <option value="19">Moda e Beleza - Premium (19%)</option>
+                                <option value="12">Casa e Jardim - Clássico (12%)</option>
+                                <option value="15">Casa e Jardim - Premium (15%)</option>
+                                <option value="13">Esportes - Clássico (13%)</option>
+                                <option value="16">Esportes - Premium (16%)</option>
+                                <option value="10">Livros - Clássico (10%)</option>
+                                <option value="13">Livros - Premium (13%)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Taxa de Frete -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="taxaFreteSelect">TAXA DE FRETE</label>
+                            <span class="help-icon" title="Selecione baseado no peso e valor do produto">?</span>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">R$</span>
+                            <select id="taxaFreteSelect" class="select-input">
+                                <optgroup label="Produtos < R$ 79, usados">
+                                    <option value="39.90">Até 300g (R$ 39,90)</option>
+                                    <option value="42.90">300g a 500g (R$ 42,90)</option>
+                                    <option value="44.90">500g a 1kg (R$ 44,90)</option>
+                                    <option value="46.90">1kg a 2kg (R$ 46,90)</option>
+                                    <option value="49.90">2kg a 3kg (R$ 49,90)</option>
+                                    <option value="53.90">3kg a 4kg (R$ 53,90)</option>
+                                    <option value="56.90">4kg a 5kg (R$ 56,90)</option>
+                                    <option value="88.90">5kg a 9kg (R$ 88,90)</option>
+                                </optgroup>
+                                <optgroup label="Produtos R$ 79 a R$ 99,99">
+                                    <option value="11.97">Até 300g (R$ 11,97)</option>
+                                    <option value="12.87">300g a 500g (R$ 12,87)</option>
+                                    <option value="13.47">500g a 1kg (R$ 13,47)</option>
+                                    <option value="14.07">1kg a 2kg (R$ 14,07)</option>
+                                    <option value="14.97">2kg a 3kg (R$ 14,97)</option>
+                                    <option value="16.17">3kg a 4kg (R$ 16,17)</option>
+                                    <option value="17.07">4kg a 5kg (R$ 17,07)</option>
+                                    <option value="26.67">5kg a 9kg (R$ 26,67)</option>
+                                </optgroup>
+                                <optgroup label="Produtos R$ 100 a R$ 119,99">
+                                    <option value="13.97">Até 300g (R$ 13,97)</option>
+                                    <option value="15.02">300g a 500g (R$ 15,02)</option>
+                                    <option value="15.72">500g a 1kg (R$ 15,72)</option>
+                                    <option value="16.42">1kg a 2kg (R$ 16,42)</option>
+                                    <option value="17.47">2kg a 3kg (R$ 17,47)</option>
+                                    <option value="18.87">3kg a 4kg (R$ 18,87)</option>
+                                    <option value="19.92">4kg a 5kg (R$ 19,92)</option>
+                                </optgroup>
+                                <optgroup label="Produtos R$ 120 a R$ 149,99">
+                                    <option value="15.96">Até 300g (R$ 15,96)</option>
+                                    <option value="17.16">300g a 500g (R$ 17,16)</option>
+                                    <option value="17.96">500g a 1kg (R$ 17,96)</option>
+                                    <option value="18.76">1kg a 2kg (R$ 18,76)</option>
+                                    <option value="19.96">2kg a 3kg (R$ 19,96)</option>
+                                </optgroup>
+                                <optgroup label="Produtos R$ 150 a R$ 199,99">
+                                    <option value="17.96">Até 300g (R$ 17,96)</option>
+                                    <option value="19.31">300g a 500g (R$ 19,31)</option>
+                                    <option value="20.21">500g a 1kg (R$ 20,21)</option>
+                                    <option value="21.11">1kg a 2kg (R$ 21,11)</option>
+                                    <option value="22.46">2kg a 3kg (R$ 22,46)</option>
+                                </optgroup>
+                                <optgroup label="Produtos > R$ 200">
+                                    <option value="19.95">Até 300g (R$ 19,95)</option>
+                                    <option value="21.45">300g a 500g (R$ 21,45)</option>
+                                    <option value="22.45">500g a 1kg (R$ 22,45)</option>
+                                    <option value="23.45">1kg a 2kg (R$ 23,45)</option>
+                                    <option value="24.95">2kg a 3kg (R$ 24,95)</option>
+                                </optgroup>
+                                <optgroup label="Frete Grátis (R$ 19 a R$ 78,99)">
+                                    <option value="0">Frete Grátis - ML paga (R$ 0,00)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Custos Extras Dinâmicos -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label>CUSTO EXTRA</label>
+                            <span class="help-icon" title="Adicione valores extras para a precificação">?</span>
+                            <button type="button" class="add-custo-extra-btn" data-target="ML">+</button>
+                        </div>
+                        <div id="custosExtrasContainerML">
+                            <!-- Campos de custo extra serão adicionados aqui via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Resultados -->
+                <div class="results-section">
+                    <!-- Resultados Principais -->
+                    <div class="main-results">
+                        <div class="result-item">
+                            <span class="result-label">Preço de Venda</span>
+                            <span class="result-value primary" id="precoVendaML">R$ 0,00</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Lucro por Venda</span>
+                            <span class="result-value primary" id="lucroPorVendaML">R$ 0,00</span>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Resultados Secundários -->
+                    <div class="secondary-results">
+                        <div class="result-box">
+                            <span class="result-label">Taxa da ML</span>
+                            <span class="result-value" id="taxaMercadoLivre">R$0,00</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Valor dos Impostos</span>
+                            <span class="result-value" id="valorImpostosML">R$0,00</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Custo Total do Produto</span>
+                            <span class="result-value" id="custoTotalML">R$0,00</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Retorno sobre Produto</span>
+                            <span class="result-value" id="retornoProdutoML">0%</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Markup %</span>
+                            <span class="result-value" id="markupPercentML">0%</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Markup X</span>
+                            <span class="result-value" id="markupXML">0X</span>
+                        </div>
+                    </div>
+
+                    <!-- Margem de Lucro -->
+                    <div class="margin-section">
+                        <h3>MARGEM DE LUCRO</h3>
+                        <div class="margin-slider-container">
+                            <input type="range" id="margemLucroML" min="0" max="70" value="0" class="margin-slider" step="0.5">
+                            <span class="margin-value" id="margemValueML">0%</span>
+                        </div>
+                    </div>
+
+
+
+                    <button type="button" id="limparCamposBtnML" class="limpar-campos-btn">Limpar Campos</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo da Aba Shein (Placeholder) -->
+        <div class="tab-content" id="shein-tab">
+            <div class="coming-soon">
+                <h2>Calculadora Shein</h2>
+                <p>Em breve...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
