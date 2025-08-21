@@ -11,12 +11,6 @@ let multiplicadorCustoShopee = 1;
 let multiplicadorCustoML = 1;
 
 // Sistema de Abas
-document.addEventListener("DOMContentLoaded", function() {
-    initializeTabs();
-    initializeShopeeCalculator();
-    initializeMercadoLivreCalculator();
-});
-
 function initializeTabs() {
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -148,18 +142,18 @@ function initializeShopeeCalculator() {
 }
 
 function calcularPrecoVendaShopee() {
-    const custoProdutoValue = document.getElementById("custoProduto").value || "0";
+    const custoProdutoValue = document.getElementById("custoProduto")?.value || "0";
     const custoProdutoBase = parseFloat(custoProdutoValue.replace(",", ".")) || 0;
     const custoProduto = custoProdutoBase * multiplicadorCustoShopee;
     
-    const impostosValue = document.getElementById("impostos").value || "0";
+    const impostosValue = document.getElementById("impostos")?.value || "0";
     const impostosPercent = parseFloat(impostosValue.replace(",", ".")) || 0;
     
-    const despesasValue = document.getElementById("despesasVariaveis").value || "0";
+    const despesasValue = document.getElementById("despesasVariaveis")?.value || "0";
     const despesasVariaveis = parseFloat(despesasValue.replace(",", ".")) || 0;
     
-    const margemDesejada = parseFloat(document.getElementById("margemLucro").value) || 0;
-    const temFreteGratis = document.getElementById("freteGratis").checked;
+    const margemDesejada = parseFloat(document.getElementById("margemLucro")?.value) || 0;
+    const temFreteGratis = document.getElementById("freteGratis")?.checked;
 
     // Separar custos extras em valores reais e percentuais
     let custosExtrasReais = 0;
@@ -169,8 +163,8 @@ function calcularPrecoVendaShopee() {
         const valueInput = item.querySelector(".custo-extra-value");
         const typeSelector = item.querySelector(".custo-extra-type-selector");
 
-        const valor = parseFloat(valueInput.value.replace(",", ".")) || 0;
-        const tipo = typeSelector.value;
+        const valor = parseFloat(valueInput?.value?.replace(",", ".")) || 0;
+        const tipo = typeSelector?.value;
 
         if (tipo === "real") {
             custosExtrasReais += valor;
@@ -213,38 +207,57 @@ function calcularPrecoVendaShopee() {
 }
 
 function atualizarResultadosShopee(resultados) {
-    document.getElementById("precoVenda").textContent = formatarReal(resultados.precoVenda);
-    document.getElementById("lucroPorVenda").textContent = formatarReal(resultados.lucroLiquido);
-    document.getElementById("taxaShopee").textContent = formatarReal(resultados.taxaShopeeValor);
-    document.getElementById("valorImpostos").textContent = formatarReal(resultados.valorImpostos);
-    document.getElementById("custoTotal").textContent = formatarReal(resultados.custoTotalProduto);
-    document.getElementById("retornoProduto").textContent = formatarPercentual(resultados.retornoProduto);
-    document.getElementById("markupPercent").textContent = formatarPercentual(resultados.markupPercent);
-    document.getElementById("markupX").textContent = `${resultados.markupX.toFixed(2)}X`;
+    const precoVendaEl = document.getElementById("precoVenda");
+    const lucroPorVendaEl = document.getElementById("lucroPorVenda");
+    const taxaShopeeEl = document.getElementById("taxaShopee");
+    const valorImpostosEl = document.getElementById("valorImpostos");
+    const custoTotalEl = document.getElementById("custoTotal");
+    const retornoProdutoEl = document.getElementById("retornoProduto");
+    const markupPercentEl = document.getElementById("markupPercent");
+    const markupXEl = document.getElementById("markupX");
+
+    if (precoVendaEl) precoVendaEl.textContent = formatarReal(resultados.precoVenda);
+    if (lucroPorVendaEl) lucroPorVendaEl.textContent = formatarReal(resultados.lucroLiquido);
+    if (taxaShopeeEl) taxaShopeeEl.textContent = formatarReal(resultados.taxaShopeeValor);
+    if (valorImpostosEl) valorImpostosEl.textContent = formatarReal(resultados.valorImpostos);
+    if (custoTotalEl) custoTotalEl.textContent = formatarReal(resultados.custoTotalProduto);
+    if (retornoProdutoEl) retornoProdutoEl.textContent = formatarPercentual(resultados.retornoProduto);
+    if (markupPercentEl) markupPercentEl.textContent = formatarPercentual(resultados.markupPercent);
+    if (markupXEl) markupXEl.textContent = `${resultados.markupX.toFixed(2)}X`;
     
     // Atualizar cor do lucro
-    const lucroPorVendaElement = document.getElementById("lucroPorVenda");
-    if (resultados.lucroLiquido > 0) {
-        lucroPorVendaElement.style.color = "#4CAF50";
-    } else if (resultados.lucroLiquido < 0) {
-        lucroPorVendaElement.style.color = "#f44336";
-    } else {
-        lucroPorVendaElement.style.color = "#ff6b35";
+    if (lucroPorVendaEl) {
+        if (resultados.lucroLiquido > 0) {
+            lucroPorVendaEl.style.color = "#4CAF50";
+        } else if (resultados.lucroLiquido < 0) {
+            lucroPorVendaEl.style.color = "#f44336";
+        } else {
+            lucroPorVendaEl.style.color = "#ff6b35";
+        }
     }
 }
 
 function resetarCalculadoraShopee() {
-    document.getElementById("custoProduto").value = "";
-    document.getElementById("impostos").value = "";
-    document.getElementById("despesasVariaveis").value = "";
-    document.getElementById("margemLucro").value = 0;
-    document.getElementById("freteGratis").checked = true;
+    const custoProdutoEl = document.getElementById("custoProduto");
+    const impostosEl = document.getElementById("impostos");
+    const despesasVariaveisEl = document.getElementById("despesasVariaveis");
+    const margemLucroEl = document.getElementById("margemLucro");
+    const freteGratisEl = document.getElementById("freteGratis");
+    const multiplierEl = document.querySelector(".multiplier:not([id])");
+    const custosExtrasContainerEl = document.getElementById("custosExtrasContainer");
+    const margemValueEl = document.getElementById("margemValue");
+
+    if (custoProdutoEl) custoProdutoEl.value = "";
+    if (impostosEl) impostosEl.value = "";
+    if (despesasVariaveisEl) despesasVariaveisEl.value = "";
+    if (margemLucroEl) margemLucroEl.value = 0;
+    if (freteGratisEl) freteGratisEl.checked = true;
     multiplicadorCustoShopee = 1;
-    document.querySelector(".multiplier:not([id])").textContent = "1x";
+    if (multiplierEl) multiplierEl.textContent = "1x";
     
-    document.getElementById("custosExtrasContainer").innerHTML = '';
+    if (custosExtrasContainerEl) custosExtrasContainerEl.innerHTML = '';
     
-    atualizarMargemValue(document.getElementById("margemValue"), 0);
+    atualizarMargemValue(margemValueEl, 0);
     calcularPrecoVendaShopee();
 }
 
@@ -289,7 +302,8 @@ function initializeMercadoLivreCalculator() {
     if (arrowUpML) {
         arrowUpML.addEventListener("click", () => {
             multiplicadorCustoML = Math.max(1, multiplicadorCustoML + 1);
-            document.getElementById("multiplierML").textContent = `${multiplicadorCustoML}x`;
+            const multiplierMLEl = document.getElementById("multiplierML");
+            if (multiplierMLEl) multiplierMLEl.textContent = `${multiplicadorCustoML}x`;
             calcularPrecoVendaML();
         });
     }
@@ -297,7 +311,8 @@ function initializeMercadoLivreCalculator() {
     if (arrowDownML) {
         arrowDownML.addEventListener("click", () => {
             multiplicadorCustoML = Math.max(1, multiplicadorCustoML - 1);
-            document.getElementById("multiplierML").textContent = `${multiplicadorCustoML}x`;
+            const multiplierMLEl = document.getElementById("multiplierML");
+            if (multiplierMLEl) multiplierMLEl.textContent = `${multiplicadorCustoML}x`;
             calcularPrecoVendaML();
         });
     }
@@ -364,24 +379,24 @@ function initializeMercadoLivreCalculator() {
 }
 
 function calcularPrecoVendaML() {
-    const custoProdutoValue = document.getElementById("custoProdutoML").value || "0";
+    const custoProdutoValue = document.getElementById("custoProdutoML")?.value || "0";
     const custoProdutoBase = parseFloat(custoProdutoValue.replace(",", ".")) || 0;
     const custoProduto = custoProdutoBase * multiplicadorCustoML;
     
-    const impostosValue = document.getElementById("impostosML").value || "0";
+    const impostosValue = document.getElementById("impostosML")?.value || "0";
     const impostosPercent = parseFloat(impostosValue.replace(",", ".")) || 0;
     
-    const despesasValue = document.getElementById("despesasVariaveisML").value || "0";
+    const despesasValue = document.getElementById("despesasVariaveisML")?.value || "0";
     const despesasVariaveis = parseFloat(despesasValue.replace(",", ".")) || 0;
     
-    const margemDesejada = parseFloat(document.getElementById("margemLucroML").value) || 0;
+    const margemDesejada = parseFloat(document.getElementById("margemLucroML")?.value) || 0;
     
     // Obter taxa do Mercado Livre selecionada
-    const taxaMLPercent = parseFloat(document.getElementById("taxaMercadoLivreSelect").value) || 12;
+    const taxaMLPercent = parseFloat(document.getElementById("taxaMercadoLivreSelect")?.value) || 12;
     const taxaML = taxaMLPercent / 100;
     
     // Obter taxa de frete selecionada
-    const taxaFrete = parseFloat(document.getElementById("taxaFreteSelect").value) || 0;
+    const taxaFrete = parseFloat(document.getElementById("taxaFreteSelect")?.value) || 0;
 
     // Separar custos extras em valores reais e percentuais
     let custosExtrasReais = 0;
@@ -391,34 +406,28 @@ function calcularPrecoVendaML() {
         const valueInput = item.querySelector(".custo-extra-value");
         const typeSelector = item.querySelector(".custo-extra-type-selector");
 
-        const valor = parseFloat(valueInput.value.replace(",", ".")) || 0;
-        const tipo = typeSelector.value;
+        const valor = parseFloat(valueInput?.value?.replace(",", ".")) || 0;
+        const tipo = typeSelector?.value;
 
         if (tipo === "real") {
             custosExtrasReais += valor;
         } else if (tipo === "percent") {
-            // Custos extras em % são aplicados sobre o preço de venda
             custosExtrasPercentuais += (valor / 100);
         }
     });
     
-    // Custo total do produto (custo + custos extras em R$)
     const custoTotalProduto = custoProduto + custosExtrasReais;
     
-    // Fórmula corrigida: PV = (Custo Total + Despesas + Frete) / (1 - Taxa ML - Margem - Impostos - Custos Extras %)
     const denominador = (1 - taxaML - (margemDesejada / 100) - (impostosPercent / 100) - custosExtrasPercentuais);
     let precoVenda = 0;
     if (denominador > 0) {
         precoVenda = (custoTotalProduto + despesasVariaveis + taxaFrete) / denominador;
     }
 
-    // Cálculos dos valores baseados no preço de venda
     const valorImpostos = precoVenda * (impostosPercent / 100);
     const valorCustosExtrasPercentuais = precoVenda * custosExtrasPercentuais;
     const taxaMLValor = precoVenda * taxaML;
-    const margemLucroValor = precoVenda * (margemDesejada / 100);
     
-    // Lucro líquido = Preço de Venda - todos os custos
     const lucroLiquido = precoVenda - custoTotalProduto - despesasVariaveis - taxaFrete - taxaMLValor - valorImpostos - valorCustosExtrasPercentuais;
     
     const retornoProduto = custoTotalProduto > 0 ? (lucroLiquido / custoTotalProduto) * 100 : 0;
@@ -439,154 +448,156 @@ function calcularPrecoVendaML() {
 }
 
 function atualizarResultadosML(resultados) {
-    document.getElementById("precoVendaML").textContent = formatarReal(resultados.precoVenda);
-    document.getElementById("lucroPorVendaML").textContent = formatarReal(resultados.lucroLiquido);
-    
-    // Taxa ML agora inclui comissão + frete
-    const taxaFreteValue = parseFloat(document.getElementById("taxaFreteSelect").value) || 0;
-    const taxaMLTotal = resultados.taxaMLValor + taxaFreteValue;
-    document.getElementById("taxaMercadoLivre").textContent = formatarReal(taxaMLTotal);
-    
-    document.getElementById("valorImpostosML").textContent = formatarReal(resultados.valorImpostos);
-    document.getElementById("custoTotalML").textContent = formatarReal(resultados.custoTotalProduto);
-    document.getElementById("retornoProdutoML").textContent = formatarPercentual(resultados.retornoProduto);
-    document.getElementById("markupPercentML").textContent = formatarPercentual(resultados.markupPercent);
-    document.getElementById("markupXML").textContent = `${resultados.markupX.toFixed(2)}X`;
+    const precoVendaEl = document.getElementById("precoVendaML");
+    const lucroPorVendaEl = document.getElementById("lucroPorVendaML");
+    const taxaMercadoLivreEl = document.getElementById("taxaMercadoLivre");
+    const valorImpostosEl = document.getElementById("valorImpostosML");
+    const custoTotalEl = document.getElementById("custoTotalML");
+    const retornoProdutoEl = document.getElementById("retornoProdutoML");
+    const markupPercentEl = document.getElementById("markupPercentML");
+    const markupXEl = document.getElementById("markupXML");
+
+    if (precoVendaEl) precoVendaEl.textContent = formatarReal(resultados.precoVenda);
+    if (lucroPorVendaEl) lucroPorVendaEl.textContent = formatarReal(resultados.lucroLiquido);
+    if (taxaMercadoLivreEl) taxaMercadoLivreEl.textContent = formatarReal(resultados.taxaMLValor);
+    if (valorImpostosEl) valorImpostosEl.textContent = formatarReal(resultados.valorImpostos);
+    if (custoTotalEl) custoTotalEl.textContent = formatarReal(resultados.custoTotalProduto);
+    if (retornoProdutoEl) retornoProdutoEl.textContent = formatarPercentual(resultados.retornoProduto);
+    if (markupPercentEl) markupPercentEl.textContent = formatarPercentual(resultados.markupPercent);
+    if (markupXEl) markupXEl.textContent = `${resultados.markupX.toFixed(2)}X`;
     
     // Atualizar cor do lucro
-    const lucroPorVendaElement = document.getElementById("lucroPorVendaML");
-    if (resultados.lucroLiquido > 0) {
-        lucroPorVendaElement.style.color = "#4CAF50";
-    } else if (resultados.lucroLiquido < 0) {
-        lucroPorVendaElement.style.color = "#f44336";
-    } else {
-        lucroPorVendaElement.style.color = "#ff6b35";
+    if (lucroPorVendaEl) {
+        if (resultados.lucroLiquido > 0) {
+            lucroPorVendaEl.style.color = "#4CAF50";
+        } else if (resultados.lucroLiquido < 0) {
+            lucroPorVendaEl.style.color = "#f44336";
+        } else {
+            lucroPorVendaEl.style.color = "#ff6b35";
+        }
     }
 }
 
 function resetarCalculadoraML() {
-    document.getElementById("custoProdutoML").value = "";
-    document.getElementById("impostosML").value = "";
-    document.getElementById("despesasVariaveisML").value = "";
-    document.getElementById("margemLucroML").value = 0;
-    document.getElementById("taxaMercadoLivreSelect").value = "12";
-    document.getElementById("taxaFreteSelect").value = "39.90";
+    const custoProdutoEl = document.getElementById("custoProdutoML");
+    const impostosEl = document.getElementById("impostosML");
+    const despesasVariaveisEl = document.getElementById("despesasVariaveisML");
+    const margemLucroEl = document.getElementById("margemLucroML");
+    const multiplierMLEl = document.getElementById("multiplierML");
+    const custosExtrasContainerEl = document.getElementById("custosExtrasContainerML");
+    const margemValueEl = document.getElementById("margemValueML");
+
+    if (custoProdutoEl) custoProdutoEl.value = "";
+    if (impostosEl) impostosEl.value = "";
+    if (despesasVariaveisEl) despesasVariaveisEl.value = "";
+    if (margemLucroEl) margemLucroEl.value = 0;
     multiplicadorCustoML = 1;
-    document.getElementById("multiplierML").textContent = "1x";
+    if (multiplierMLEl) multiplierMLEl.textContent = "1x";
     
-    document.getElementById("custosExtrasContainerML").innerHTML = '';
+    if (custosExtrasContainerEl) custosExtrasContainerEl.innerHTML = '';
     
-    atualizarMargemValue(document.getElementById("margemValueML"), 0);
+    atualizarMargemValue(margemValueEl, 0);
     calcularPrecoVendaML();
 }
 
-// ===== FUNÇÕES UTILITÁRIAS =====
-function formatarReal(valor) {
-    return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-    }).format(valor);
-}
-
-function formatarPercentual(valor) {
-    return `${valor.toFixed(2)}%`;
-}
-
-function atualizarMargemValue(element, valor) {
-    if (element) {
-        element.textContent = `${valor}%`;
-    }
-}
-
-function atualizarCorMargem(slider, margem) {
-    const fillPercentage = (margem / parseFloat(slider.max)) * 100;
-    slider.style.setProperty("--track-fill", `${fillPercentage}%`);
-
-    slider.classList.remove(
-        'margem-vermelho',
-        'margem-laranja',
-        'margem-amarelo',
-        'margem-verde-lima',
-        'margem-verde-claro',
-        'margem-azul-ciano',
-        'margem-azul-escuro'
-    );
-
-    if (margem >= 0 && margem <= 5) {
-        slider.classList.add('margem-vermelho');
-    } else if (margem >= 6 && margem <= 7) {
-        slider.classList.add('margem-laranja');
-    } else if (margem >= 8 && margem <= 16) {
-        slider.classList.add('margem-amarelo');
-    } else if (margem >= 17 && margem <= 24) {
-        slider.classList.add('margem-verde-lima');
-    } else if (margem >= 25 && margem <= 35) {
-        slider.classList.add('margem-verde-claro');
-    } else if (margem >= 36 && margem <= 50) {
-        slider.classList.add('margem-azul-ciano');
-    } else if (margem >= 51 && margem <= 70) {
-        slider.classList.add("margem-azul-escuro");
-    }
-}
-
+// ===== FUNÇÕES AUXILIARES =====
 function validarEntradaNumerica(input) {
-    let value = input.value.replace(/[^0-9.,]/g, "");
+    let valor = input.value;
     
-    if (value.includes(',')) {
-        value = value.replace(/\./g, '');
-        const parts = value.split(',');
-        if (parts.length > 2) {
-            value = parts[0] + ',' + parts.slice(1).join('');
-        }
-    } else if (value.includes('.')) {
-        const parts = value.split('.');
-        if (parts.length > 2) {
-            value = parts[0] + '.' + parts.slice(1).join('');
-        }
+    // Remove caracteres não numéricos, exceto vírgula e ponto
+    valor = valor.replace(/[^0-9,\.]/g, '');
+    
+    // Substitui ponto por vírgula
+    valor = valor.replace(/\./g, ',');
+    
+    // Permite apenas uma vírgula
+    const partes = valor.split(',');
+    if (partes.length > 2) {
+        valor = partes[0] + ',' + partes.slice(1).join('');
     }
     
-    input.value = value;
+    // Limita a 2 casas decimais após a vírgula
+    if (partes.length === 2 && partes[1].length > 2) {
+        valor = partes[0] + ',' + partes[1].substring(0, 2);
+    }
+    
+    input.value = valor;
 }
 
 function formatarCampo(input) {
     let valorString = input.value.replace(",", ".");
-    const valor = parseFloat(valorString);
+    let valor = parseFloat(valorString);
     
-    if (!isNaN(valor) && valor >= 0) {
-        input.value = valor.toFixed(2).replace(".", ",");
-    } else {
+    if (isNaN(valor) || valor < 0) {
         input.value = "0,00";
+    } else {
+        input.value = valor.toFixed(2).replace(".", ",");
     }
 }
 
-function adicionarCustoExtra(target) {
-    const id = `custoExtra-${Date.now()}`;
-    const custoExtraWrapper = document.createElement("div");
-    custoExtraWrapper.classList.add("custo-extra-wrapper");
-    custoExtraWrapper.dataset.id = id;
-    custoExtraWrapper.innerHTML = `
-        <div class="custo-extra-item">
-            <select class="custo-extra-type-selector">
-                <option value="real">R$</option>
-                <option value="percent">%</option>
-            </select>
-            <input type="text" class="custo-extra-value" placeholder="0,00">
-        </div>
-        <button type="button" class="remove-custo-extra-btn">X</button>
-    `;
+function formatarReal(valor) {
+    if (isNaN(valor)) return "R$ 0,00";
+    return "R$ " + valor.toFixed(2).replace(".", ",");
+}
 
-    const container = target === "ML" ? 
-        document.getElementById("custosExtrasContainerML") : 
-        document.getElementById("custosExtrasContainer");
+function formatarPercentual(valor) {
+    if (isNaN(valor)) return "0%";
+    return valor.toFixed(2).replace(".", ",") + "%";
+}
+
+function atualizarMargemValue(element, valor) {
+    if (element) {
+        element.textContent = valor + "%";
+    }
+}
+
+function atualizarCorMargem(slider, valor) {
+    if (!slider) return;
     
-    container.appendChild(custoExtraWrapper);
+    const percentage = (valor - slider.min) / (slider.max - slider.min) * 100;
+    
+    let cor;
+    if (valor <= 10) {
+        cor = "#f44336"; // Vermelho
+    } else if (valor <= 20) {
+        cor = "#ff9800"; // Laranja
+    } else if (valor <= 30) {
+        cor = "#ffeb3b"; // Amarelo
+    } else {
+        cor = "#4caf50"; // Verde
+    }
+    
+    slider.style.background = `linear-gradient(to right, ${cor} 0%, ${cor} ${percentage}%, #ddd ${percentage}%, #ddd 100%)`;
+}
 
-    // Adicionar listeners para o novo campo
-    const inputElement = custoExtraWrapper.querySelector(".custo-extra-value");
-    const typeSelector = custoExtraWrapper.querySelector(".custo-extra-type-selector");
-    const removeButton = custoExtraWrapper.querySelector(".remove-custo-extra-btn");
-
-    inputElement.addEventListener("input", function() {
+function adicionarCustoExtra(target) {
+    const containerId = target === "ML" ? "custosExtrasContainerML" : "custosExtrasContainer";
+    const container = document.getElementById(containerId);
+    
+    if (!container) return;
+    
+    const custoExtraId = Date.now();
+    const custoExtraHTML = `
+        <div class="custo-extra-item" data-id="${custoExtraId}">
+            <div class="custo-extra-input-wrapper">
+                <input type="text" class="custo-extra-value" placeholder="0,00">
+                <select class="custo-extra-type-selector">
+                    <option value="real">R$</option>
+                    <option value="percent">%</option>
+                </select>
+                <button type="button" class="remove-custo-extra-btn" onclick="removerCustoExtra(${custoExtraId})">×</button>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', custoExtraHTML);
+    
+    // Adicionar event listeners para o novo campo
+    const newItem = container.querySelector(`[data-id="${custoExtraId}"]`);
+    const valueInput = newItem.querySelector('.custo-extra-value');
+    const typeSelector = newItem.querySelector('.custo-extra-type-selector');
+    
+    valueInput.addEventListener('input', function() {
         validarEntradaNumerica(this);
         if (target === "ML") {
             calcularPrecoVendaML();
@@ -595,7 +606,7 @@ function adicionarCustoExtra(target) {
         }
     });
     
-    inputElement.addEventListener("blur", function() {
+    valueInput.addEventListener('blur', function() {
         formatarCampo(this);
         if (target === "ML") {
             calcularPrecoVendaML();
@@ -604,16 +615,7 @@ function adicionarCustoExtra(target) {
         }
     });
     
-    typeSelector.addEventListener("change", function() {
-        if (target === "ML") {
-            calcularPrecoVendaML();
-        } else {
-            calcularPrecoVendaShopee();
-        }
-    });
-
-    removeButton.addEventListener("click", function() {
-        custoExtraWrapper.remove();
+    typeSelector.addEventListener('change', function() {
         if (target === "ML") {
             calcularPrecoVendaML();
         } else {
@@ -622,57 +624,12 @@ function adicionarCustoExtra(target) {
     });
 }
 
-
-
-// ===== FUNCIONALIDADE DO MENU DE USUÁRIO =====
-function initializeUserMenu() {
-    const userIconBtn = document.getElementById("userIconBtn");
-    const userDropdownMenu = document.getElementById("userDropdownMenu");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const themeToggle = document.getElementById("themeToggle");
-
-    if (userIconBtn) {
-        userIconBtn.addEventListener("click", () => {
-            userDropdownMenu.classList.toggle("show");
-        });
+function removerCustoExtra(id) {
+    const item = document.querySelector(`[data-id="${id}"]`);
+    if (item) {
+        item.remove();
+        // Recalcular após remoção
+        calcularPrecoVendaShopee();
+        calcularPrecoVendaML();
     }
-
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            logout();
-        });
-    }
-
-    if (themeToggle) {
-        // Apply saved theme on page load
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme === "dark-theme") {
-            document.body.classList.add("dark-theme");
-            themeToggle.checked = true;
-        } else {
-            document.body.classList.remove("dark-theme");
-            themeToggle.checked = false;
-        }
-
-        themeToggle.addEventListener("change", function() {
-            if (this.checked) {
-                document.body.classList.add("dark-theme");
-                localStorage.setItem("theme", "dark-theme");
-            } else {
-                document.body.classList.remove("dark-theme");
-                localStorage.setItem("theme", "light-theme"); // Or remove item if light is default
-            }
-        });
-    }
-
-    // Fechar o menu se clicar fora
-    window.addEventListener("click", (e) => {
-        if (!userIconBtn.contains(e.target) && !userDropdownMenu.contains(e.target)) {
-            userDropdownMenu.classList.remove("show");
-        }
-    });
 }
-
-// Adicionar a inicialização do menu de usuário ao DOMContentLoaded
-document.addEventListener("DOMContentLoaded", initializeUserMenu);
