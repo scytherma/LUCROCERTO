@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head> 
+    <link rel="icon" type="image/png" href="https://i.ibb.co/tyjmnjV/FAVCON-LUCRE-CERTO-FOGUETE.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precificação - Lucre Certo</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
+    <script src="./auth-supabase.js"></script>
+    <script src="./script.js"></script>
+    <script src="./spa.js"></script>
+</head>
+<body>
+    <!-- Loading screen -->
+    <div id="loading-screen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100% );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    ">
+        <div style="text-align: center;">
+            <div style="
+                width: 50px;
+                height: 50px;
+                border: 3px solid rgba(255,255,255,0.3);
+                border-top: 3px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            "></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                document.getElementById("userName").textContent = user.email;
+                document.getElementById("dropdownUserName").textContent = user.email;
+            }
+        });
+    </script>
+
+    <!-- App Container com Sidebar e Conteúdo -->
+    <div id="app" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" aria-label="Navegação principal">
+            <div class="brand">
+                <img src="https://i.postimg.cc/KYqk4xX2/LOGO-LUCRE-CERTO-FOGUETE.png" class="brand__icon" alt="Logo Lucre Certo">
+                <span class="brand__text">Lucre Certo</span>
+            </div>
+            <nav class="nav">
+                <a class="nav__item active" href="#" data-route="home">
+                    <i class="fas fa-home"></i>
+                    <span>Início</span>
+                </a>
+                <a class="nav__item" href="#" data-route="calculadora">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculadora</span>
+                </a>
+                <a class="nav__item" href="#" data-route="gerenciar">
+                    <i class="fas fa-list-check"></i>
+                    <span>Gerenciar Anúncios</span>
+                </a>
+                <a class="nav__item" href="#" data-route="fechamento">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Fechamento de mês</span>
+                </a>
+                <a class="nav__item" href="#" data-route="pesquisa">
+                    <i class="fas fa-search"></i>
+                    <span>Pesquisa de Mercado</span>
+                </a>
+                <a class="nav__item" href="#" data-route="conexoes">
+                    <i class="fas fa-plug"></i>
+                    <span>Conexões</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header com informações do usuário -->
+            <div class="user-header">
+                <div class="user-info">
+                    <span id="userName">Carregando...</span>
+                    <div class="user-menu-container">
+                        <button class="user-icon-btn" id="userIconBtn">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" stroke="#ff6b35" stroke-width="2" fill="#f8f9fa"/>
+                                <circle cx="12" cy="8" r="3" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                                <path d="M6 20c0-4 3-6 6-6s6 2 6 6" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                            </svg>
+                        </button>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-header">
+                                <span id="dropdownUserName"></span>
+                            </div>
+                            <div class="dropdown-item theme-toggle-item">
+                                <span>Tema:</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="themeToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span>Claro/Escuro</span>
+                            </div>
+                            <a href="#" class="dropdown-item">Configurações</a>
+                            <a href="#" class="dropdown-item">Ajuda</a>
+                            <a href="#" class="dropdown-item">Termos de Uso</a>
+                            <a href="#" class="dropdown-item logout-btn" id="logoutBtn">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Container de Conteúdo SPA -->
+            <div class="content-container" id="content-container">
+                <!-- O conteúdo será carregado dinamicamente aqui -->
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+
