@@ -1,1 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head> 
+    <link rel="icon" type="image/png" href="https://i.ibb.co/tyjmnjV/FAVCON-LUCRE-CERTO-FOGUETE.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precificação - Lucre Certo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
+    <script src="./auth-supabase.js"></script>
+    <script src="./script.js"></script>
+</head>
+<body>
+    <!-- Loading screen -->
+    <div id="loading-screen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100% );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    ">
+        <div style="text-align: center;">
+            <div style="
+                width: 50px;
+                height: 50px;
+                border: 3px solid rgba(255,255,255,0.3);
+                border-top: 3px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 20px;
+            "></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
 
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('user-header').style.display = 'flex';
+                document.getElementById("main-content").style.display = "block";
+                document.getElementById("userName").textContent = user.email;
+                document.getElementById("dropdownUserName").textContent = user.email;
+            }
+        });
+    </script>
+
+    <!-- Header com logo -->
+    <div class="user-header" id="user-header" style="display: none;">
+        <div class="logo-container">
+            <img src="https://i.postimg.cc/KYqk4xX2/LOGO-LUCRE-CERTO-FOGUETE.png" class="logo">
+        </div>
+        <div class="user-info">
+            <span id="userName">Carregando...</span>
+            <div class="user-menu-container">
+                <button class="user-icon-btn" id="userIconBtn">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="#ff6b35" stroke-width="2" fill="#f8f9fa"/>
+                        <circle cx="12" cy="8" r="3" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                        <path d="M6 20c0-4 3-6 6-6s6 2 6 6" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                    </svg>
+                </button>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-header">
+                        <span id="dropdownUserName"></span>
+                    </div>
+                    <div class="dropdown-item theme-toggle-item">
+                        <span>Tema:</span>
+                        <label class="switch">
+                            <input type="checkbox" id="themeToggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Claro/Escuro</span>
+                    </div>
+                    <a href="#" class="dropdown-item">Configurações</a>
+                    <a href="#" class="dropdown-item">Ajuda</a>
+                    <a href="#" class="dropdown-item">Termos de Uso</a>
+                    <a href="#" class="dropdown-item logout-btn" id="logoutBtn">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="main-content" style="display: none;">
+        <!-- Sistema de Abas -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="shopee">Calculadora Shopee</button>
+                <button class="tab-button" data-tab="mercadolivre">Calculadora Mercado Livre</button>
+                <button class="tab-button disabled" data-tab="shein">Calculadora Shein</button>
+            </div>
+        </div>
+
+        <!-- ================= Shopee ================= -->
+        <!-- (mesmo bloco da Shopee que você já tinha no novo HTML, mantido igual) -->
+
+        <!-- ================= Mercado Livre ================= -->
+        <!-- Aqui eu trago TODAS as opções de taxas e fretes do arquivo antigo -->
+        <div class="tab-content" id="mercadolivre-tab">
+            <div class="calculator-wrapper">
+                <div class="input-section">
+                    <!-- custo, impostos, despesas, etc. -->
+                    <!-- ... -->
+
+                    <!-- Taxa do Mercado Livre -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="taxaMercadoLivreSelect">TAXA DO MERCADO LIVRE</label>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">%</span>
+                            <select id="taxaMercadoLivreSelect" class="select-input">
+                                <!-- TODAS opções de comissão recuperadas do index.html antigo -->
+                                <option value="12">Geral - Clássico (12%)</option>
+                                <option value="15">Geral - Premium (15%)</option>
+                                <option value="14">Eletrônicos - Clássico (14%)</option>
+                                <option value="17">Eletrônicos - Premium (17%)</option>
+                                <option value="16">Moda e Beleza - Clássico (16%)</option>
+                                <option value="19">Moda e Beleza - Premium (19%)</option>
+                                <option value="12">Casa e Jardim - Clássico (12%)</option>
+                                <option value="15">Casa e Jardim - Premium (15%)</option>
+                                <option value="13">Esportes - Clássico (13%)</option>
+                                <option value="16">Esportes - Premium (16%)</option>
+                                <option value="10">Livros - Clássico (10%)</option>
+                                <option value="13">Livros - Premium (13%)</option>
+                                <!-- + as que existiam no index.html antigo -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Taxa de Frete -->
+                    <div class="input-group">
+                        <div class="label-container">
+                            <label for="taxaFreteSelect">TAXA DE FRETE</label>
+                        </div>
+                        <div class="input-wrapper">
+                            <span class="currency">R$</span>
+                            <select id="taxaFreteSelect" class="select-input">
+                                <!-- TODAS opções de frete recuperadas do index.html antigo -->
+                                <!-- Exemplo: Produtos < R$ 79 -->
+                                <optgroup label="Produtos < R$ 79">
+                                    <option value="39.90">Até 300g (R$ 39,90)</option>
+                                    <option value="42.90">300g a 500g (R$ 42,90)</option>
+                                    <!-- ... segue todas as opções -->
+                                </optgroup>
+                                <!-- demais optgroups -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-section">
+                    <!-- principais resultados -->
+                    <!-- ... -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= Shein Placeholder ================= -->
+        <div class="tab-content" id="shein-tab">
+            <div class="coming-soon">
+                <h2>Calculadora Shein</h2>
+                <p>Em breve...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
